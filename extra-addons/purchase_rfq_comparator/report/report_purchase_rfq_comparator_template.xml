@@ -1,0 +1,231 @@
+<odoo>
+
+    <template id="report_purchase_rfq_comparator_layout">
+        <!-- para que sea visible el header se requiere wkhtmltopdf 0.12.5 -->
+        <div class="header border border-dark py-2 px-2 mx-3" style="border-radius: 24px; font-size: 16px;">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <!-- Logo -->
+                <div class="d-flex align-items-center w-25" style="overflow: hidden;">
+                    <img t-if="env.company.logo" t-att-src="image_data_uri(env.company.logo)" style="max-height: 78pt;"/>
+                </div>
+
+                <!-- Título del Reporte -->
+                <div class="text-center w-50 p-1">
+                    <div>
+                        <span>
+                            <b t-out="env.company.name"/>
+                        </span>
+                    </div>
+                    <div>
+                        <span>
+                            <b>ANÁLISIS COMPARATIVO DE PROVEEDORES</b>
+                        </span>
+                    </div>
+                    <div>
+                        <span t-out="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M:%S')"/>
+                    </div>
+                </div>
+
+                <!-- Información adicional -->
+                <div class="w-25 p-1 text-start">
+                    <div>Página: <span class="page" style="font-size: 16px;"/>
+ de <span class="topage"/>
+                </div>
+                <div>
+                    <span t-out="env.user.name"/>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="article o_report_layout_standard">
+        <t t-out="0" />
+    </div>
+</template>
+
+<template id="report_purchase_rfq_comparator" name="ANÁLISIS COMPARATIVO DE PROVEEDORES">
+    <t t-call="web.html_container">
+        <t t-call="purchase_rfq_comparator.report_purchase_rfq_comparator_layout">
+            <div class="page">
+                <style>
+                        .table-kev-report {
+                        border-collapse: separate !important;
+                        border-spacing: 5px 0 !important;
+                        font-size: 12px !important;
+                        }
+                        .table-kev-report th {
+                        border-bottom: 1.5px solid black !important;
+                        border-top: 0px !important;
+                        border-left: 0px !important;
+                        border-right: 0px !important;
+                        text-align: center;
+                        }
+                        .table-kev-report td {
+                        padding: .3em !important;
+                        }
+                        .table-kev-report tbody {
+                        boder: 0px !important;
+                        }
+                        .bold-text {
+                            font-weight: bold;
+                        }
+
+                        .table-kev-report thead {
+                            boder: 0px !important;
+                            background-color: #f2f2f2 !important;
+                        }
+
+                        .table-kev-report-dotted {
+                            border-collapse: separate !important;
+                            border-spacing: 5px 0 !important;
+                            font-size: 12px !important;
+                            border-style: dotted !important;
+                        }
+                        .bg-ctg-green {
+                            background-color: #078C4E !important;
+                        }
+                </style>
+
+                <t t-set="req_id" t-value="req_id if req_id else docs.id"/>
+                <t t-set="data" t-value="docs.get_rfq_comparator_data(req_id)"/>
+
+                <section class="container mx-0 mt-2">
+                    <t t-if="data">
+                        <table class="table table-bordered table-kev-report table-sm">
+                            <thead>
+                                <tr>
+                                    <th class="bg-ctg-green text-white" colspan="100%">
+                                        <h4 class="modal-title text-break" style="font-size: 20px;">
+                                            <b>ACUERDO DE COMPRA - <t t-out="data['name']"></t>
+                                            </b>
+                                        </h4>
+                                    </th>
+                                </tr>
+                                <tr t-if="data['proyect']">
+                                    <th class="bg-ctg-green text-white" colspan="100%">
+                                        <h4 class="modal-title text-break text-white" style="font-size: 20px;">
+                                            <b>Proyecto: <t t-out="data['proyect']"></t>
+                                            </b>
+                                        </h4>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="font-weight-bold">Proveedor</th>
+                                    <t t-foreach="data['purchases']" t-as="po">
+                                        <th colspan="4">
+                                            <t t-out="po['supplier']"/>
+                                        </th>
+                                    </t>
+                                </tr>
+                                <tr>
+                                    <th class="font-weight-bold">Orden de Compra</th>
+                                    <t t-foreach="data['purchases']" t-as="po">
+                                        <th colspan="4">
+                                            <t t-out="po['name']"/>
+                                        </th>
+                                    </t>
+                                </tr>
+                                <tr>
+                                    <th class="font-weight-bold">Estado</th>
+                                    <t t-foreach="data['purchases']" t-as="po">
+                                        <th colspan="4">
+                                            <div t-attf-class="alert #{po['state_class']} m-0 p-2" role="alert">
+                                                <t t-out="po['state_text']"/>
+                                            </div>
+                                        </th>
+                                    </t>
+                                </tr>
+                                <tr>
+                                    <th class="font-weight-bold">Productos</th>
+                                    <t t-foreach="data['purchases']" t-as="po">
+
+                                        <th class="font-weight-bold">
+                                            Cant.
+                                        </th>
+                                        <th class="font-weight-bold">
+                                            Precio
+                                        </th>
+                                        <th class="font-weight-bold">
+                                            Subtotal
+                                        </th>
+                                        <th class="font-weight-bold">
+                                            Tiempos
+                                        </th>
+                                    </t>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="data['pruducts']" t-as="product">
+                                    <td>
+                                        <t t-out="product['name']"/>
+                                        <t t-if="product['description']">
+                                            <br></br>
+                                            <span class="fst-italic text-muted text-sm-start"> - <t t-out="product['description']"/>
+                                            </span>
+                                        </t>
+                                    </td>
+                                    <t t-foreach="data['purchases']" t-as="po">
+                                        <t t-set="prod_key" t-value="str(product['id']) + '_' + str(product['row_index'])"/>
+                                        <t t-set="prod_data" t-value="po['products'].get(prod_key)"/>
+                                        <t t-if="prod_data">
+                                            <td>
+                                                <t t-out="prod_data['qty']"/>
+                                            </td>
+                                            <td>
+                                                <t t-out="docs.format_amount(prod_data['price'])"/>
+                                            </td>
+                                            <td>
+                                                <t t-out="docs.format_amount(prod_data['subtotal'])"/>
+                                            </td>
+                                            <td>
+                                                <t t-out="prod_data['times']"/>
+                                            </td>
+                                        </t>
+                                        <t t-else="">
+                                            <td colspan="4"></td>
+                                        </t>
+                                    </t>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td class="fw-bold ">
+                                        <p class="font-weight-bold">Total &#8594;</p>
+                                    </td>
+
+                                    <t t-foreach="data['purchases']" t-as="po">
+                                        <td colspan="4" t-att-class="po['ranking_class']">
+                                            <div t-attf-class="alert #{po['ranking_class']} fw-bold m-0 p-2" role="alert">
+                                                <t t-out="docs.format_amount(po['amount_total'])"/>
+                                            </div>
+                                        </td>
+                                    </t>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold ">
+                                        <p class="font-weight-bold">Comentarios &#8594;</p>
+                                    </td>
+
+                                    <t t-foreach="data['purchases']" t-as="po">
+                                        <td colspan="4">
+                                            <t t-if="po['notes']">
+                                                <t t-out="po['notes']"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span>-</span>
+                                            </t>
+                                        </td>
+                                    </t>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </t>
+                </section>
+            </div>
+            <p style="page-break-before:always;"></p>
+        </t>
+    </t>
+</template>
+</odoo>

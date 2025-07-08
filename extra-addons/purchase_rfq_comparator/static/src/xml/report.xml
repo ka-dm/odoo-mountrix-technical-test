@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="purchase_rfq_comparator.clientaction" owl="1">
+        <style>
+            .table-kev-report {
+            border-collapse: separate !important;
+            border-spacing: 5px 0 !important;
+            font-size: 12px !important;
+            }
+            .table-kev-report th {
+            border-bottom: 1.5px solid black !important;
+            border-top: 0px !important;
+            border-left: 0px !important;
+            border-right: 0px !important;
+            text-align: center;
+            }
+            .table-kev-report td {
+            padding: .3em !important;
+            }
+            .table-kev-report tbody {
+            boder: 0px !important;
+            }
+            .bold-text {
+                font-weight: bold;
+            }
+            .modal-footer {
+                display: none;
+            }
+            .bg-ctg-green {
+                background-color: #078C4E !important;
+            }
+        </style>
+        <section class="container my-2">
+            <button class="btn btn-outline-primary" t-on-click="() => this.printPDF()">
+                <i class="fa fa-file-pdf-o"></i> PDF</button>
+            <!-- <button class="btn-outline-secondary" icon="fa-file-excel-o" t-on-click="() => this.printPDF()">EXCEL</button> -->
+        </section>
+        <!-- <section class="container text-center my-2">
+            <h4 class="modal-title text-break">ANÁLISIS COMPARATIVO DE PROVEEDORES</h4>
+        </section> -->
+        <section class="container">
+            <t t-if="this.state.data">
+                <table class="table table-bordered table-kev-report table-sm">
+                    <thead>
+                        <tr>
+                            <th class="bg-ctg-green text-white" colspan="100%">
+                                <h4 class="modal-title text-break text-white" style="font-size: 20px;">
+                                    <b>ACUERDO DE COMPRA - <t t-out="this.state.data.name"></t>
+                                    </b>
+                                </h4>
+                            </th>
+
+                        </tr>
+                        <tr t-if="this.state.data.proyect">
+                            <th class="bg-ctg-green text-white" colspan="100%">
+                                <h4 class="modal-title text-break text-white" style="font-size: 20px;">
+                                    <b>Proyecto: <t t-out="this.state.data.proyect"></t>
+                                    </b>
+                                </h4>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th class="font-weight-bold">Proveedor</th>
+                            <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                <th colspan="4">
+                                    <t t-out="po.supplier"/>
+                                </th>
+                            </t>
+                        </tr>
+                        <tr>
+                            <th class="font-weight-bold">Orden de Compra</th>
+                            <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                <th colspan="4">
+                                    <t t-out="po.name"/>
+                                </th>
+                            </t>
+                        </tr>
+                        <tr>
+                            <th class="font-weight-bold">Estado</th>
+                            <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                <th colspan="4">
+                                    <div t-attf-class="alert #{po.state_class} m-0 p-2" role="alert">
+                                        <t t-out="po.state_text"/>
+                                    </div>
+                                </th>
+                            </t>
+                        </tr>
+                        <tr>
+                            <th class="font-weight-bold">Productos</th>
+                            <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                <th class="font-weight-bold">
+                                    Cant.
+                                </th>
+                                <th class="font-weight-bold">
+                                    Precio
+                                </th>
+                                <th class="font-weight-bold">
+                                    Subtotal
+                                </th>
+                                <th class="font-weight-bold">
+                                    Tiempos
+                                </th>
+                            </t>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="this.state.data.pruducts" t-as="product" t-key="product.row_index">
+                            <td>
+                                <t t-out="product.name"/>
+                                <t t-if="product.description">
+                                    <br></br>
+                                    <span class="fst-italic text-muted text-sm-start"> - <t t-out="product.description"/>
+                                    </span>
+                                </t>
+                            </td>
+                            <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                <t t-set="prod_key" t-value="`${product.id}_${product.row_index}`"/>
+                                <t t-set="prod_data" t-value="po.products[prod_key]"/>
+                                <t t-if="prod_data">
+                                    <td>
+                                        <t t-out="prod_data.qty"/>
+                                    </td>
+                                    <td>
+                                        <t t-out="formatAmount(prod_data.price)"/>
+                                    </td>
+                                    <td>
+                                        <t t-out="formatAmount(prod_data.subtotal)"/>
+                                    </td>
+                                    <td>
+                                        <t t-out="prod_data.times"/>
+                                    </td>
+                                </t>
+                                <t t-else="">
+                                    <td colspan="4"></td>
+                                </t>
+                            </t>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td class="fw-bold ">
+                                <p class="font-weight-bold">Total &#8594;</p>
+                            </td>
+                            <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                <td colspan="4" t-att-class="{
+                                        'table-success text-success': po.ranking === 1,
+                                        'table-warning text-warning': po.ranking === 2, 
+                                        'table-danger text-danger': po.ranking >= 3
+                                    }">
+                                    <p class="fw-bold m-0 p-0">
+                                        <t t-out="formatAmount(po.amount_total)"/>
+                                    </p>
+                                </td>
+                            </t>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold ">
+                                <p class="font-weight-bold">Comentarios &#8594;</p>
+                            </td>
+
+                            <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                <td colspan="4">
+                                    <t t-if="po.notes">
+                                        <t t-out="cleanHtmlText(po.notes)"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span>-</span>
+                                    </t>
+                                </td>
+                            </t>
+                        </tr>
+                    </tfoot>
+                </table>
+            </t>
+        </section>
+    </t>
+</templates>

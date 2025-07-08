@@ -1,0 +1,30 @@
+<odoo>
+
+    <record id="paperformat_rfq_comparator" model="report.paperformat">
+        <field name="name">RFQ Comparator Letter</field>
+        <field name="default" eval="False"/>
+        <field name="format">Letter</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">35</field>
+        <field name="margin_bottom">5</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">30</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="action_report_purchase_rfq_comparator" model="ir.actions.report">
+        <field name="name">Analisis Comparativo de Proveedores (PDF)</field>
+        <field name="model">purchase.requisition</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">purchase_rfq_comparator.report_purchase_rfq_comparator</field>
+        <field name="report_file">purchase_rfq_comparator.report_purchase_rfq_comparator</field>
+        <field name="binding_model_id" ref="model_purchase_requisition"/>
+        <field name="paperformat_id" ref="paperformat_rfq_comparator" />
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Analisis Comparativo de Proveedores - %s' % (object.name)</field>
+    </record>
+</odoo>
