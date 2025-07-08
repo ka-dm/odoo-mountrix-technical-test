@@ -17,7 +17,6 @@
    ```bash
    docker-compose up
    ```
-   This will start Odoo and the required PostgreSQL database.
 
 3. **Access Odoo:**
    - Open your browser and go to: [http://localhost:8069](http://localhost:8069)
