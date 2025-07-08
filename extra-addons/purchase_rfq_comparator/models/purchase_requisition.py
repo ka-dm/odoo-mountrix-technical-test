@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
+from datetime import datetime
 
 
 class PurchaseRequisitionRfqComparator(models.Model):
@@ -10,11 +11,14 @@ class PurchaseRequisitionRfqComparator(models.Model):
     def action_open_rfq_comparison(self):
         self.ensure_one()
         return {
-            'name': "ANÁLISIS COMPARATIVO DE PROVEEDORES",
+            'name': "Purchase RFQ Comparator",
             'type': 'ir.actions.client',
             'tag': 'purchase_rfq_comparator.MyClientAction',
             'target': 'new',
             'flags': {'header': False, 'footer': False},
+            'context': {
+                'dialog_size': 'extra-large',
+            },
         }
 
     @api.model
@@ -45,6 +49,10 @@ class PurchaseRequisitionRfqComparator(models.Model):
                 return 'alert-danger'
 
             def get_product_info(line, row_index):
+                """
+                Devuelve la información del producto, incluyendo si tiene el mejor precio entre todas las órdenes.
+                Ahora compara el mejor precio de cada producto (por product_id) entre todas las RFQs.
+                """
                 return {
                     "id": line.product_id.id,
                     "row_index": row_index,
@@ -53,14 +61,40 @@ class PurchaseRequisitionRfqComparator(models.Model):
                     "price": line.price_unit,
                     "subtotal": line.price_subtotal,
                     "times": line.date_planned or "",
-                    
                 }
 
             def get_ranking_by_amount(purchase_list, current_purchase):
                 sorted_purchases = sorted(purchase_list, key=lambda x: x.amount_total)
                 return sorted_purchases.index(current_purchase) + 1
 
-            ranking = get_ranking_by_amount(requisition.purchase_ids, purchase)
+            def get_ranking_by_delivery_time(purchase_list, current_purchase):
+                # Obtener la fecha de entrega más temprana de cada orden de compra
+                def get_earliest_delivery_date(purchase):
+                    if not purchase.order_line:
+                        return None
+                    delivery_dates = [line.date_planned for line in purchase.order_line if line.date_planned]
+                    return min(delivery_dates) if delivery_dates else None
+                
+                # Filtrar órdenes que tienen fechas de entrega válidas
+                purchases_with_dates = [(p, get_earliest_delivery_date(p)) for p in purchase_list]
+                purchases_with_dates = [(p, date) for p, date in purchases_with_dates if date]
+                
+                if not purchases_with_dates:
+                    return None
+                
+                # Ordenar por fecha de entrega (más temprana primero)
+                sorted_purchases = sorted(purchases_with_dates, key=lambda x: x[1])
+                current_earliest = get_earliest_delivery_date(current_purchase)
+                
+                if current_earliest:
+                    for i, (p, date) in enumerate(sorted_purchases):
+                        if p.id == current_purchase.id:
+                            return i + 1
+                return None
+
+            ranking_amount = get_ranking_by_amount(requisition.purchase_ids, purchase)
+            ranking_delivery = get_ranking_by_delivery_time(requisition.purchase_ids, purchase)
+            
             def get_ranking_class(rank):
                 if rank == 1:
                     return 'alert-success'
@@ -68,13 +102,28 @@ class PurchaseRequisitionRfqComparator(models.Model):
                     return 'alert-warning'
                 return 'alert-danger'
 
-            ranking_class = get_ranking_class(ranking)
+            ranking_class = get_ranking_class(ranking_amount)
             
+            # Optimización: Precalcular el menor precio unitario por producto en todas las compras
+            # para evitar bucles anidados por cada línea de orden.
+            # Creamos un dict: {product_id: min_price}
+            min_price_per_product = {}
+            for purchase_obj in requisition.purchase_ids:
+                for line_obj in getattr(purchase_obj, 'order_line', []):
+                    product_id = getattr(line_obj.product_id, 'id', None)
+                    price_unit = getattr(line_obj, 'price_unit', None)
+                    if product_id is not None and price_unit is not None:
+                        if product_id not in min_price_per_product or price_unit < min_price_per_product[product_id]:
+                            min_price_per_product[product_id] = price_unit
+
             # Crear un diccionario de productos usando row_index como clave
             products_dict = {}
             for index, line in enumerate(purchase.order_line):
                 key = f"{line.product_id.id}_{index}"
                 products_dict[key] = get_product_info(line, index)
+                product_id = line.product_id.id
+                min_price = min_price_per_product.get(product_id)
+                products_dict[key]["is_best_price"] = (line.price_unit == min_price)
 
             purchase_data = {
                 "id": purchase.id,
@@ -86,7 +135,8 @@ class PurchaseRequisitionRfqComparator(models.Model):
                 "products": products_dict,
                 "notes": purchase.notes,
                 "amount_total": purchase.amount_total,
-                "ranking": ranking,
+                "ranking_amount": ranking_amount,
+                "ranking_delivery": ranking_delivery,
                 "ranking_class": ranking_class
             }
                 
@@ -100,10 +150,9 @@ class PurchaseRequisitionRfqComparator(models.Model):
                 "description": line.product_description_variants or "",
                 "qty": line.product_qty,
             })
-
+            
         return {
             "name": requisition.name,
-            "proyect": requisition.x_studio_proyecto.name if hasattr(requisition, 'x_studio_proyecto') and requisition.x_studio_proyecto else "",
             "purchases": purchases_info,
             "pruducts": pruducts_info
         }
