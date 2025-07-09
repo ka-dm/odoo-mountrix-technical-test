@@ -229,7 +229,7 @@
                                     <tfoot>
                                         <tr>
                                             <td colspan="4" class="text-end fw-bold">Optimal Total</td>
-                                            <td class="fw-bold">
+                                            <td class="fw-bold text-success">
                                                 <t t-out="formatAmount(totalOptimal)"/>
                                             </td>
                                         </tr>
@@ -240,6 +240,7 @@
                     </div>
                     <!-- Column 2: Savings KPI -->
                     <div class="col-4">
+                        <!-- Potential Savings -->
                         <div class="card mb-3 shadow-tw border-0" style="max-width: 540px;">
                             <div class="row g-0 h-100">
                                 <div class="col-md-10 d-flex align-items-center">
@@ -271,20 +272,89 @@
                                                     0%
                                                 </t>
                                             </span>
-                                            <span class="text-nowrap">Compared to the best RFQ</span>
+                                            <span class="mx-1 text-nowrap">Compared to the best RFQ</span>
                                         </p>
                                     </div>
                                 </div>
-                                <div class="col-md-2 d-flex align-items-center justify-content-center">
+                                <div class="col-md-2 p-1 d-flex align-items-center justify-content-center">
                                     <img src="/purchase_rfq_comparator/static/src/img/savings.png" class="img-fluid rounded-start" alt="Potential Savings"/>
                                 </div>
                             </div>
-                            
-                        </div>    
-                        <section class="container my-2">
-                            <button class="btn btn-outline-primary" t-on-click="() => this.printPDF()">
-                                <i class="fa fa-file-pdf-o"></i> Download PDF</button>
-                        </section>                    
+                        </div>  
+                        <!-- Delivery Range (Best RFQ) -->
+                        <div class="card mb-3 shadow-tw border-0" style="max-width: 540px;">
+                            <div class="row g-0 h-100">
+                                <div class="col-md-10 d-flex align-items-center">
+                                    <div class="card-body w-100 text-start">
+                                        <h5 class="card-title fw-bold fs-5 mb-1">Delivery Time (Optimal Purchase)</h5>
+                                        <t t-set="optimalPO" t-value="null"/>
+                                        <t t-set="minTotal" t-value="null"/>
+                                        <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                            <t t-if="minTotal === null or po.amount_total &lt; minTotal">
+                                                <t t-set="minTotal" t-value="po.amount_total"/>
+                                                <t t-set="optimalPO" t-value="po"/>
+                                            </t>
+                                        </t>
+                                        <t t-if="optimalPO">
+                                            <t t-set="minDate" t-value="null"/>
+                                            <t t-set="maxDate" t-value="null"/>
+                                            <t t-foreach="Object.values(optimalPO.products)" t-as="prod" t-key="prod.id">
+                                                <t t-if="prod.times">
+                                                    <t t-set="dateParts" t-value="prod.times.split('/')"/>
+                                                    <t t-set="prodDate" t-value="new Date('20' + dateParts[2], dateParts[1] - 1, dateParts[0])"/>
+                                                    <t t-if="minDate === null or prodDate &lt; minDate">
+                                                        <t t-set="minDate" t-value="prodDate"/>
+                                                    </t>
+                                                    <t t-if="maxDate === null or prodDate &gt; maxDate">
+                                                        <t t-set="maxDate" t-value="prodDate"/>
+                                                    </t>
+                                                </t>
+                                            </t>
+                                            <t t-if="minDate &amp;&amp; maxDate">
+                                                <t t-set="now" t-value="new Date()"/>
+                                                <t t-set="diffMin" t-value="Math.round((minDate - now) / (1000 * 60 * 60 * 24))"/>
+                                                <t t-set="diffMax" t-value="Math.round((maxDate - now) / (1000 * 60 * 60 * 24))"/>
+                                                <span class="h2 font-weight-bold mb-0 text-success ">
+                                                    <t t-if="diffMin === diffMax">
+                                                        <t t-out="`${diffMin} Days`"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <t t-out="`${diffMin} - ${diffMax} Days`"/>
+                                                    </t>
+                                                </span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="h2 font-weight-bold mb-0 text-success ">-</span>
+                                            </t>
+                                            <p class="card-text text-muted small mt-3 mb-0">
+                                                <span class="text-success">
+                                                    <i class="fa fa-clock-o"></i>
+                                                </span>
+                                                <span class="mx-1 text-nowrap">Best delivery range</span>
+                                            </p>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="h2 font-weight-bold mb-0 text-success ">-</span>
+                                            <p class="card-text text-muted small mt-3 mb-0">
+                                                <span class="text-success">
+                                                    <i class="fa fa-clock-o"></i>
+                                                </span>
+                                                <span class="mx-1 text-nowrap">No delivery data available</span>
+                                            </p>
+                                        </t>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 p-1 d-flex align-items-center justify-content-center">
+                                    <img src="/purchase_rfq_comparator/static/src/img/fast-delivery.png" class="img-fluid rounded-start" alt="Delivery Range"/>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Download PDF -->
+                        <div class="card mb-3 shadow-tw border-0" style="max-width: 540px;">
+                            <button class="btn btn-outline-primary"
+                                t-on-click="() => this.printPDF()">
+                                <i class="fa fa-file-pdf-o"></i> Download PDF </button>
+                        </div>                    
                     </div>
                 </div>
             </section>
