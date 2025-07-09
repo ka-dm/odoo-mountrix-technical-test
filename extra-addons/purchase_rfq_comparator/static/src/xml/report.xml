@@ -29,250 +29,264 @@
             .bg-ctg-green {
                 background-color: #078C4E !important;
             }
+            .bg-grey-soft {  
+                background-color: #F5F7FA;
+            }
+            .shadow-tw {
+                box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+            }
         </style>
-        <section class="container my-2">
-            <button class="btn btn-outline-primary" t-on-click="() => this.printPDF()">
-                <i class="fa fa-file-pdf-o"></i> PDF</button>
-        </section>
-        <section class="container">
-            <div t-if="this.state.data" class="card shadow-sm">
-                
-                <table class="table table-bordered table-kev-report table-sm">
-                    <thead>
-                        <tr>
-                            <th class="" colspan="100%">
-                                <h4 class="modal-title text-break text-black" style="font-size: 20px;">
-                                    <b>Purchase RFQ Comparator - <t t-out="this.state.data.name"></t>
-                                    </b>
-                                </h4>
-                            </th>
-
-                        </tr>
-                        <tr t-if="this.state.data.proyect">
-                            <th class="bg-ctg-green text-white" colspan="100%">
-                                <h4 class="modal-title text-break text-white" style="font-size: 20px;">
-                                    <b>Proyecto: <t t-out="this.state.data.proyect"></t>
-                                    </b>
-                                </h4>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th class="font-weight-bold">Vendor</th>
-                            <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
-                                <th colspan="4">
-                                    <t t-out="po.supplier"/>
+        <div class="bg-grey-soft m-0 p-0">
+            <section class="container my-2">
+                <button class="btn btn-outline-primary" t-on-click="() => this.printPDF()">
+                    <i class="fa fa-file-pdf-o"></i> PDF</button>
+            </section>
+            <section class="container">
+                <div t-if="this.state.data" class="card shadow-tw border-0">
+                    
+                    <table class="table table-bordered table-kev-report table-sm">
+                        <thead>
+                            <tr>
+                                <th class="" colspan="100%">
+                                    <h4 class="modal-title text-break text-black" style="font-size: 20px;">
+                                        <b>Purchase RFQ Comparator - <t t-out="this.state.data.name"></t>
+                                        </b>
+                                    </h4>
                                 </th>
-                            </t>
-                        </tr>
-                        <tr>
-                            <th class="font-weight-bold">Purchase Order</th>
-                            <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
-                                <th colspan="4">
-                                    <t t-out="po.name"/>
-                                </th>
-                            </t>
-                        </tr>
-                        <tr>
-                            <th class="font-weight-bold">Estate</th>
-                            <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
-                                <th colspan="4">
-                                    <div t-attf-class="alert #{po.state_class} m-0 p-2" role="alert">
-                                        <t t-out="po.state_text"/>
-                                    </div>
-                                </th>
-                            </t>
-                        </tr>
-                        <tr>
-                            <th class="font-weight-bold">Products</th>
-                            <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
-                                <th class="font-weight-bold">
-                                    Qty.
-                                </th>
-                                <th class="font-weight-bold">
-                                    Price
-                                </th>
-                                <th class="font-weight-bold">
-                                    Subtotal
-                                </th>
-                                <th class="font-weight-bold">
-                                    Date
-                                </th>
-                            </t>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr t-foreach="this.state.data.pruducts" t-as="product" t-key="product.row_index">
-                            <td>
-                                <t t-out="product.name"/>
-                                <t t-if="product.description">
-                                    <br></br>
-                                    <span class="fst-italic text-muted text-sm-start"> - <t t-out="product.description"/>
-                                    </span>
-                                </t>
-                            </td>
-                            <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
-                                <t t-set="prod_key" t-value="`${product.id}_${product.row_index}`"/>
-                                <t t-set="prod_data" t-value="po.products[prod_key]"/>
-                                <t t-if="prod_data">
-                                    <td>
-                                        <t t-out="prod_data.qty"/>
-                                    </td>
-                                    <td t-att-class="{'text-success fw-bold': prod_data.is_best_price}">
-                                        <t t-out="formatAmount(prod_data.price)"/>
-                                    </td>
-                                    <td>
-                                        <t t-out="formatAmount(prod_data.subtotal)"/>
-                                    </td>
-                                    <td>
-                                        <t t-if="prod_data.times">
-                                            <t t-set="dateParts" t-value="prod_data.times.split(' ')[0].split('-')"/>
-                                            <t t-out="`${dateParts[1]}/${dateParts[2]}/${dateParts[0].slice(2)}`"/>
+                            </tr>
+                            <tr>
+                                <th class="font-weight-bold">Vendor</th>
+                                <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                    <th colspan="4">
+                                        <t t-if="po.supplier_id">
+                                            <img t-attf-src="/web/image/res.partner/#{po.supplier_id}/avatar_128" class="o_avatar o_portal_chatter_avatar align-self-start me-3 rounded" alt="Supplier Avatar"/>
                                         </t>
-                                    </td>
+                                        <t t-out="po.supplier"/>
+                                    </th>
                                 </t>
-                                <t t-else="">
-                                    <td colspan="4"></td>
+                            </tr>
+                            <tr>
+                                <th class="font-weight-bold">Purchase Order</th>
+                                <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                    <th colspan="4">
+                                        <t t-out="po.name"/>
+                                    </th>
                                 </t>
-                            </t>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td class="fw-bold ">
-                                <p class="font-weight-bold">Total &#8594;</p>
-                            </td>
-                            <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
-                                <td colspan="4" t-att-class="{
-                                        'table-success text-success': po.ranking_amount === 1,
-                                        'table-warning text-warning': po.ranking_amount === 2, 
-                                        'table-danger text-danger': po.ranking_amount >= 3
-                                    }">
-                                    <p class="fw-bold m-0 p-0">
-                                        <t t-out="formatAmount(po.amount_total)"/>
-                                    </p>
+                            </tr>
+                            <tr>
+                                <th class="font-weight-bold">Estate</th>
+                                <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                    <th colspan="4">
+                                        <div t-attf-class="alert #{po.state_class} m-0 p-2" role="alert">
+                                            <t t-out="po.state_text"/>
+                                        </div>
+                                    </th>
+                                </t>
+                            </tr>
+                            <tr>
+                                <th class="font-weight-bold">Products</th>
+                                <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                    <th class="font-weight-bold">
+                                        Qty.
+                                    </th>
+                                    <th class="font-weight-bold">
+                                        Price
+                                    </th>
+                                    <th class="font-weight-bold">
+                                        Subtotal
+                                    </th>
+                                    <th class="font-weight-bold">
+                                        Date
+                                    </th>
+                                </t>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="this.state.data.pruducts" t-as="product" t-key="product.row_index">
+                                <td>
+                                    <t t-out="product.name"/>
+                                    <t t-if="product.description">
+                                        <br></br>
+                                        <span class="fst-italic text-muted text-sm-start"> - <t t-out="product.description"/>
+                                        </span>
+                                    </t>
                                 </td>
-                            </t>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold ">
-                                <p class="font-weight-bold">Comments &#8594;</p>
-                            </td>
-
-                            <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
-                                <td colspan="4">
-                                    <t t-if="po.notes">
-                                        <t t-out="cleanHtmlText(po.notes)"/>
+                                <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                    <t t-set="prod_key" t-value="`${product.id}_${product.row_index}`"/>
+                                    <t t-set="prod_data" t-value="po.products[prod_key]"/>
+                                    <t t-if="prod_data">
+                                        <td>
+                                            <t t-out="prod_data.qty"/>
+                                        </td>
+                                        <td t-att-class="{'text-success fw-bold': prod_data.is_best_price}">
+                                            <t t-out="formatAmount(prod_data.price)"/>
+                                        </td>
+                                        <td>
+                                            <t t-out="formatAmount(prod_data.subtotal)"/>
+                                        </td>
+                                        <td>
+                                            <t t-out="prod_data.times"/>
+                                        </td>
                                     </t>
                                     <t t-else="">
-                                        <span>-</span>
+                                        <td colspan="4"></td>
                                     </t>
+                                </t>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td class="fw-bold ">
+                                    <p class="font-weight-bold">Total &#8594;</p>
                                 </td>
-                            </t>
-                        </tr>   
-                    </tfoot>
-                </table>
-            </div>
-        </section>
-        <section class="container">
-            <div class="row my-4 align-items-stretch">
-                <!-- Columna 1: Compra Óptima -->
-                <div class="col-8">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                            <span class="fw-bold fs-5">Optimal Purchase</span>
-                            <button type="button" class="btn btn-success btn-sm" t-on-click="printPDF">
-                                <i class="fa fa-shopping-cart me-1"></i> Buy Optimal
-                            </button>
-                        </div>
-                        <div class="card-body p-3">
-                            <table class="table table-sm table-bordered mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Supplier</th>
-                                        <th>Unit Price</th>
-                                        <th>Quantity</th>
-                                        <th>Subtotal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <t t-set="optimalRows" t-value="[]"/>
-                                    <t t-set="totalOptimal" t-value="0"/>
-                                    <t t-foreach="this.state.data.pruducts" t-as="prod" t-key="`${prod.id}_${prod.row_index}`">
-                                        <t t-set="best" t-value="null"/>
-                                        <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
-                                            <t t-set="prodKey" t-value="`${prod.id}_${prod.row_index}`"/>
-                                            <t t-if="po.products[prodKey] &amp;&amp; po.products[prodKey].is_best_price">
-                                                <t t-set="best" t-value="{
-                                                    'product': prod,
-                                                    'supplier': po.supplier,
-                                                    'price': po.products[prodKey].price,
-                                                    'qty': po.products[prodKey].qty,
-                                                    'subtotal': po.products[prodKey].subtotal
-                                                }"/>
-                                            </t>
-                                        </t>
-                                        <t t-if="best">
-                                            <tr>
-                                                <td><t t-out="best.product.name"/></td>
-                                                <td><t t-out="best.supplier"/></td>
-                                                <td><t t-out="formatAmount(best.price)"/></td>
-                                                <td><t t-out="best.qty"/></td>
-                                                <td>
-                                                    <t t-out="formatAmount(best.subtotal)"/>
-                                                    <t t-set="totalOptimal" t-value="totalOptimal + best.subtotal"/>
-                                                </td>
-                                            </tr>
-                                        </t>
-                                    </t>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="4" class="text-end fw-bold">Optimal Total</td>
-                                        <td class="fw-bold">
-                                            <t t-out="formatAmount(totalOptimal)"/>
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <!-- Column 2: Savings KPI -->
-                <div class="col-4">
-                    <div class="card mb-3 h-100 shadow-sm" style="max-width: 540px;">
-                        <div class="row g-0 h-100">
-                            <div class="col-md-4 d-flex align-items-center justify-content-center">
-                                <img src="/purchase_rfq_comparator/static/src/img/savings.png" class="img-fluid rounded-start" alt="Potential Savings"/>
-                            </div>
-                            <div class="col-md-8 d-flex align-items-center">
-                                <div class="card-body w-100 text-center">
-                                    <div class="mb-2">
-                                        <i class="fa fa-piggy-bank fa-3x text-success"></i>
-                                    </div>
-                                    <h5 class="card-title fw-bold fs-5 mb-1">Potential Savings</h5>
-                                    <t t-set="minTotal" t-value="null"/>
-                                    <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
-                                        <t t-if="minTotal === null or po.amount_total &lt; minTotal">
-                                            <t t-set="minTotal" t-value="po.amount_total"/>
-                                        </t>
-                                    </t>
-                                    <t t-set="saving" t-value="(minTotal !== null &amp;&amp; totalOptimal !== null) ? (minTotal - totalOptimal) : 0"/>
-                                    <p class="fs-4 text-success card-text mb-1">
-                                        <t t-if="saving &gt; 0">
-                                            <t t-out="formatAmount(saving)"/>
+                                <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                    <td colspan="4" t-att-class="{
+                                            'table-success text-success': po.ranking_amount === 1,
+                                            'table-warning text-warning': po.ranking_amount === 2, 
+                                            'table-danger text-danger': po.ranking_amount >= 3
+                                        }">
+                                        <p class="fw-bold m-0 p-0">
+                                            <t t-out="formatAmount(po.amount_total)"/>
+                                        </p>
+                                    </td>
+                                </t>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold ">
+                                    <p class="font-weight-bold">Comments &#8594;</p>
+                                </td>
+
+                                <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                    <td colspan="4">
+                                        <t t-if="po.notes">
+                                            <t t-out="cleanHtmlText(po.notes)"/>
                                         </t>
                                         <t t-else="">
                                             <span>-</span>
                                         </t>
-                                    </p>
-                                    <p class="card-text text-muted small mb-0">Compared to the best RFQ</p>
-                                </div>
+                                    </td>
+                                </t>
+                            </tr>   
+                        </tfoot>
+                    </table>
+                </div>
+            </section>
+            <section class="container">
+                <div class="row my-4 align-items-stretch">
+                    <!-- Column 1: Optimal Purchase -->
+                    <div class="col-8">
+                        <div class="card h-100 shadow-tw border-0">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span class="fw-bold fs-5">Optimal Purchase</span>
+                                <button type="button" class="btn btn-success btn-sm" t-on-click="printPDF">
+                                    <i class="fa fa-shopping-cart me-1"></i> Buy Optimal
+                                </button>
+                            </div>
+                            <div class="card-body p-3">
+                                <table class="table table-sm table-bordered mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Supplier</th>
+                                            <th>Unit Price</th>
+                                            <th>Quantity</th>
+                                            <th>Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="optimalRows" t-value="[]"/>
+                                        <t t-set="totalOptimal" t-value="0"/>
+                                        <t t-foreach="this.state.data.pruducts" t-as="prod" t-key="`${prod.id}_${prod.row_index}`">
+                                            <t t-set="best" t-value="null"/>
+                                            <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                                <t t-set="prodKey" t-value="`${prod.id}_${prod.row_index}`"/>
+                                                <t t-if="po.products[prodKey] &amp;&amp; po.products[prodKey].is_best_price">
+                                                    <t t-set="best" t-value="{
+                                                        'product': prod,
+                                                        'supplier': po.supplier,
+                                                        'supplier_id': po.supplier_id,
+                                                        'price': po.products[prodKey].price,
+                                                        'qty': po.products[prodKey].qty,
+                                                        'subtotal': po.products[prodKey].subtotal
+                                                    }"/>
+                                                </t>
+                                            </t>
+                                            <t t-if="best">
+                                                <tr>
+                                                    <td><t t-out="best.product.name"/></td>
+                                                    <td>
+                                                        <t t-if="best.supplier_id">
+                                                            <img t-attf-src="/web/image/res.partner/#{best.supplier_id}/avatar_128" class="o_avatar o_portal_chatter_avatar align-self-start me-3 rounded" alt="Supplier Avatar"/>
+                                                        </t>
+                                                        <t t-out="best.supplier"/>
+                                                    </td>
+                                                    <td><t t-out="formatAmount(best.price)"/></td>
+                                                    <td><t t-out="best.qty"/></td>
+                                                    <td>
+                                                        <t t-out="formatAmount(best.subtotal)"/>
+                                                        <t t-set="totalOptimal" t-value="totalOptimal + best.subtotal"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="4" class="text-end fw-bold">Optimal Total</td>
+                                            <td class="fw-bold">
+                                                <t t-out="formatAmount(totalOptimal)"/>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
                             </div>
                         </div>
                     </div>
+                    <!-- Column 2: Savings KPI -->
+                    <div class="col-4">
+                        <div class="card mb-3 shadow-tw border-0" style="max-width: 540px;">
+                            <div class="row g-0 h-100">
+                                <div class="col-md-10 d-flex align-items-center">
+                                    <div class="card-body w-100 text-start">
+                                        <h5 class="card-title fw-bold fs-5 mb-1">Potential Savings</h5>
+                                        <t t-set="minTotal" t-value="null"/>
+                                        <t t-foreach="this.state.data.purchases" t-as="po" t-key="po.id">
+                                            <t t-if="minTotal === null or po.amount_total &lt; minTotal">
+                                                <t t-set="minTotal" t-value="po.amount_total"/>
+                                            </t>
+                                        </t>
+                                        <t t-set="saving" t-value="(minTotal !== null &amp;&amp; totalOptimal !== null) ? (minTotal - totalOptimal) : 0"/>
+                                        <span class="h2 font-weight-bold mb-0 text-success ">
+                                            <t t-if="saving &gt; 0">
+                                                <t t-out="formatAmount(saving)"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span>-</span>
+                                            </t>
+                                        </span>
+                                        <p class="card-text text-muted small mt-3 mb-0">
+                                            <t t-set="percent_saving" t-value="(minTotal !== null &amp;&amp; minTotal !== 0 &amp;&amp; totalOptimal !== null) ? ((minTotal - totalOptimal) / minTotal * 100) : 0"/>
+                                            <span class="text-success mr-2">
+                                                <i class="fa fa-arrow-down"></i>
+                                                <t t-if="percent_saving &gt; 0">
+                                                    <t t-out="percent_saving.toFixed(2)"/>%
+                                                </t>
+                                                <t t-else="">
+                                                    0%
+                                                </t>
+                                            </span>
+                                            <span class="text-nowrap">Compared to the best RFQ</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-center justify-content-center">
+                                    <img src="/purchase_rfq_comparator/static/src/img/savings.png" class="img-fluid rounded-start" alt="Potential Savings"/>
+                                </div>
+                            </div>
+                        </div>                        
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
     </t>
 </templates>

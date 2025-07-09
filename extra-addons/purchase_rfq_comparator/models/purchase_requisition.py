@@ -60,7 +60,7 @@ class PurchaseRequisitionRfqComparator(models.Model):
                     "qty": line.product_qty,
                     "price": line.price_unit,
                     "subtotal": line.price_subtotal,
-                    "times": line.date_planned or "",
+                    "times": line.date_planned.strftime('%d/%m/%y') if line.date_planned else "",
                 }
 
             def get_ranking_by_amount(purchase_list, current_purchase):
@@ -129,6 +129,7 @@ class PurchaseRequisitionRfqComparator(models.Model):
                 "id": purchase.id,
                 "name": purchase.name,
                 "supplier": purchase.partner_id.name,
+                "supplier_id": purchase.partner_id.id,
                 "state": purchase.state,
                 "state_class": get_state_class(purchase.state),
                 "state_text": state_mapping.get(purchase.state, purchase.state),
@@ -168,5 +169,5 @@ class PurchaseRequisitionRfqComparator(models.Model):
         lang = self.env.user.lang or 'es_CO'
         lang_obj = self.env['res.lang']._lang_get(lang)
         currency = self.env.company.currency_id
-        formatted = lang_obj.format('%.2f', value, grouping=True, monetary=True)
+        formatted = lang_obj.format('%.2f', value, grouping=True)
         return '%s %s' % (currency.symbol, formatted)

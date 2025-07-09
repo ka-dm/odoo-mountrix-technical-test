@@ -1,7 +1,7 @@
 <odoo>
 
     <template id="report_purchase_rfq_comparator_layout">
-        <!-- para que sea visible el header se requiere wkhtmltopdf 0.12.5 -->
+        <!-- header visibility requires wkhtmltopdf 0.12.5 -->
         <div class="header border border-dark py-2 px-2 mx-3" style="border-radius: 24px; font-size: 16px;">
             <div class="d-flex justify-content-between align-items-center w-100">
                 <!-- Logo -->
@@ -9,7 +9,7 @@
                     <img t-if="env.company.logo" t-att-src="image_data_uri(env.company.logo)" style="max-height: 78pt;"/>
                 </div>
 
-                <!-- Título del Reporte -->
+                <!-- Report Title -->
                 <div class="text-center w-50 p-1">
                     <div>
                         <span>
@@ -18,7 +18,7 @@
                     </div>
                     <div>
                         <span>
-                            <b>ANÁLISIS COMPARATIVO DE PROVEEDORES</b>
+                            <b>SUPPLIER COMPARATIVE ANALYSIS</b>
                         </span>
                     </div>
                     <div>
@@ -26,10 +26,10 @@
                     </div>
                 </div>
 
-                <!-- Información adicional -->
+                <!-- Additional Information -->
                 <div class="w-25 p-1 text-start">
-                    <div>Página: <span class="page" style="font-size: 16px;"/>
- de <span class="topage"/>
+                    <div>Page: <span class="page" style="font-size: 16px;"/>
+ of <span class="topage"/>
                 </div>
                 <div>
                     <span t-out="env.user.name"/>
@@ -45,7 +45,7 @@
     </div>
 </template>
 
-<template id="report_purchase_rfq_comparator" name="ANÁLISIS COMPARATIVO DE PROVEEDORES">
+<template id="report_purchase_rfq_comparator" name="SUPPLIER COMPARATIVE ANALYSIS">
     <t t-call="web.html_container">
         <t t-call="purchase_rfq_comparator.report_purchase_rfq_comparator_layout">
             <div class="page">
@@ -96,23 +96,15 @@
                         <table class="table table-bordered table-kev-report table-sm">
                             <thead>
                                 <tr>
-                                    <th class="bg-ctg-green text-white" colspan="100%">
+                                    <th class="text-white" colspan="100%">
                                         <h4 class="modal-title text-break" style="font-size: 20px;">
-                                            <b>ACUERDO DE COMPRA - <t t-out="data['name']"></t>
-                                            </b>
-                                        </h4>
-                                    </th>
-                                </tr>
-                                <tr t-if="data['proyect']">
-                                    <th class="bg-ctg-green text-white" colspan="100%">
-                                        <h4 class="modal-title text-break text-white" style="font-size: 20px;">
-                                            <b>Proyecto: <t t-out="data['proyect']"></t>
+                                            <b>PURCHASE AGREEMENT - <t t-out="data['name']"></t>
                                             </b>
                                         </h4>
                                     </th>
                                 </tr>
                                 <tr>
-                                    <th class="font-weight-bold">Proveedor</th>
+                                    <th class="font-weight-bold">Supplier</th>
                                     <t t-foreach="data['purchases']" t-as="po">
                                         <th colspan="4">
                                             <t t-out="po['supplier']"/>
@@ -120,7 +112,7 @@
                                     </t>
                                 </tr>
                                 <tr>
-                                    <th class="font-weight-bold">Orden de Compra</th>
+                                    <th class="font-weight-bold">Purchase Order</th>
                                     <t t-foreach="data['purchases']" t-as="po">
                                         <th colspan="4">
                                             <t t-out="po['name']"/>
@@ -128,7 +120,7 @@
                                     </t>
                                 </tr>
                                 <tr>
-                                    <th class="font-weight-bold">Estado</th>
+                                    <th class="font-weight-bold">Status</th>
                                     <t t-foreach="data['purchases']" t-as="po">
                                         <th colspan="4">
                                             <div t-attf-class="alert #{po['state_class']} m-0 p-2" role="alert">
@@ -138,20 +130,20 @@
                                     </t>
                                 </tr>
                                 <tr>
-                                    <th class="font-weight-bold">Productos</th>
+                                    <th class="font-weight-bold">Products</th>
                                     <t t-foreach="data['purchases']" t-as="po">
 
                                         <th class="font-weight-bold">
-                                            Cant.
+                                            Qty.
                                         </th>
                                         <th class="font-weight-bold">
-                                            Precio
+                                            Price
                                         </th>
                                         <th class="font-weight-bold">
                                             Subtotal
                                         </th>
                                         <th class="font-weight-bold">
-                                            Tiempos
+                                            Date
                                         </th>
                                     </t>
                                 </tr>
@@ -205,7 +197,7 @@
                                 </tr>
                                 <tr>
                                     <td class="fw-bold ">
-                                        <p class="font-weight-bold">Comentarios &#8594;</p>
+                                        <p class="font-weight-bold">Comments &#8594;</p>
                                     </td>
 
                                     <t t-foreach="data['purchases']" t-as="po">

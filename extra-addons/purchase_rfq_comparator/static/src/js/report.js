@@ -47,9 +47,9 @@ export class MyClientAction extends Component {
 
     formatAmount(value) {
         if (!value) return '';
-        return new Intl.NumberFormat('es-CO', {
+        return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'COP',
+            currency: 'USD',
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
         }).format(value);
