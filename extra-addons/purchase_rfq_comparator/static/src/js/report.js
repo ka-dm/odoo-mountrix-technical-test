@@ -45,6 +45,18 @@ export class MyClientAction extends Component {
         });        
     }
 
+    async onClickBuyOptimal() {
+        const action = await this.orm.call(
+            'purchase.requisition',
+            'action_buy_optimal',
+            [this.state.req_id],
+            {},
+        );
+        if (action) {
+            this.action.doAction(action);
+        }
+    }
+
     formatAmount(value) {
         if (!value) return '';
         return new Intl.NumberFormat('en-US', {

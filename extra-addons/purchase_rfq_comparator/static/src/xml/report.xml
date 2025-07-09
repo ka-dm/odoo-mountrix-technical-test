@@ -173,8 +173,11 @@
                     <div class="col-8">
                         <div class="card h-100 shadow-tw border-0">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <span class="fw-bold fs-5">Optimal Purchase</span>
-                                <button type="button" class="btn btn-success btn-sm" t-on-click="printPDF">
+                                <div class="p-1 d-flex align-items-center justify-content-center">
+                                    <img src="/purchase_rfq_comparator/static/src/img/data-analysis.png" class="img-fluid rounded-start me-1" alt="Optimal Purchase" style="max-height: 40px; width: auto;"/>
+                                    <span class="fw-bold fs-5 align-middle">Optimal Purchase</span>
+                                </div>
+                                <button type="button" class="btn btn-success btn-sm" t-on-click="onClickBuyOptimal">
                                     <i class="fa fa-shopping-cart me-1"></i> Buy Optimal
                                 </button>
                             </div>
