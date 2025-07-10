@@ -81,16 +81,20 @@ Después de instalar el módulo:
 
 A continuación, se describe paso a paso cómo utilizar el módulo:
 
-1. **Acceso inicial:**  
-   [Describe el acceso al menú o funcionalidad principal]
-
-2. **Flujo básico de uso:**  
-   1. [Primer paso: por ejemplo, crear un registro]
-   2. [Segundo paso: editar o procesar información]
-   3. [Tercer paso: visualizar resultados, reportes, etc.]
-
-3. **Funciones avanzadas:**  
-   [Opcional: Describe cualquier funcionalidad adicional o avanzada]
+1. **Instalacion y configuracion:**  
+   * Primero ve al menu de aplicaciones e instala "purchase_rfq_comparator"
+   * Luego ir a los ajustes del modulo "Purchase" y activar las siguiente configuraciones:
+      - Purchase Agreements
+      - Purchase Alternatives
+      - 
+3. **Flujo básico de uso:**  
+   1. Ir al modulo "Purchase"
+   2. Navega por el menu "Orders/Purchase Agreements"
+   3. Crea una nueva requisision de compra
+   4. Agrega una o varias RFQ
+   5. Regrasa a la vista de formulario de la requisicion
+   6. Hacer clic en el boton "Comparison"
+   7. Luego de validar podra hacer clic en el boton "Buy Optimal" o "Download PDF
 
 ---
 
@@ -103,18 +107,19 @@ A continuación, se muestran capturas de pantalla que ilustran el funcionamiento
 > Ejemplo:
 >
 > 1. **Instalación del módulo desde Apps**
->    ![image1](image1)
+>    ![image](https://github.com/user-attachments/assets/69cbd4eb-36d6-46d1-8a29-a38462130068)
+
 >
-> 2. **Acceso al menú principal**
->    ![image2](image2)
+> 2. **Configuracion para el correcto funcionamiento**
+>    ![image](https://github.com/user-attachments/assets/7fe91be2-5b2e-4e68-992c-404768575c47)
+
 >
 > 3. **Creación de un registro**
->    ![image3](image3)
+>    ![image](https://github.com/user-attachments/assets/e1b7672d-5d55-4c7d-b9ab-1cf9d181e4c6)
+
 >
-> 4. **Visualización de resultados**
->    ![image4](image4)
->
-> [Agrega tantas imágenes como sea necesario para cubrir el flujo completo]
+> 4. **Abrir comparador de RFQ desde el boton inteligente**
+>    ![image](https://github.com/user-attachments/assets/763d4f6b-1840-43e6-b74c-a73dfa798c2f)
 
 ---
 
