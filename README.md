@@ -64,7 +64,7 @@ Sigue estos pasos para instalar y activar el módulo:
 4. **Accede a la instancia de Odoo:**  
    Abre tu navegador y entra a [http://localhost:8069](http://localhost:8069)
 
-5. **Busca el módulo por su nombre *purchase_rfq_comparator* en Odoo Apps y haz clic en **Instalar**.
+5. Busca el módulo por su nombre *purchase_rfq_comparator* en Odoo Apps y haz clic en **Instalar**.
 
 ---
 
